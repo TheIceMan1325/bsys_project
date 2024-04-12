@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+from time import sleep
 
 class Radar(tk.Canvas):
     line = 0
@@ -67,6 +68,7 @@ def main():
     while True:
         for angle in range(0, 180):
             radar.drawLine(angle=angle)
+            sleep(0.01)
             root.update()
             root.update_idletasks()
 
