@@ -8,27 +8,17 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 factory = PiGPIOFactory()
 servo = Servo(17, min_pulse_width=0.8/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
-def output(angle):
-    os.system("clear")
-    print("135                      90°                           45°\n")
-    print("  .                        .                        .     \n")
-    print("      .                    .                    .         \n")
-    print("          .                .                .             \n")
-    print("              .            .            .                 \n")
-    print("                  .        .        .                     \n")
-    print("                      .    .    .                         \n")
-    print("180 . . . . . . . . . . . . . . . . . . . . . . . . . . 0°\n")
-    print("\nCurrent angle: ", angle, "°\n")
+
 
 def rotateSensor():
-    servo.value = math.sin(math.radians(90))
+    servo.value = math.sin(math.radians(0))
     sleep(2)
     while True:
-        for i in range(0, 360):
-            servo.value = math.sin(math.radians(i))
-            if (i % 30 == 0):
-                # output(i / 2)
-                print(servo.value)
+        for angle in range(0, 360):
+            servo.value = math.sin(math.radians(angle))
+            if (angle % 15 == 0):
+                servoAngle = abs(90 * servo.value - 90)
+
             sleep(0.01)
 
 rotateSensor()
