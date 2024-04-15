@@ -102,13 +102,14 @@ def rotateSensor():
         for angle in range(0, 360):
             try:
                 servo.value = math.sin(math.radians(angle))
-                servoAngle = abs(90 * servo.value - 90)
-                # servoValue = math.sin(math.radians(angle))
-                # servoAngle = abs(90 * servoValue - 90)
-                radar.drawLine(angle=servoAngle)
+                delayedValue = math.sin(math.radians(angle - 25))
+                delayedAngle = abs(90 * delayedValue - 90)
+                radar.drawLine(angle=delayedAngle)
                 # Only draw object if in range and only every 5th degree
-                if (ultrasonic.distance < 0.5 and specificRound(servoAngle) % 5 == 0):
-                    radar.drawObject(angle=servoAngle, distance=(ultrasonic.distance * 2))
+                if (ultrasonic.distance < 0.5 and specificRound(delayedAngle) % 5 == 0):
+                    print("Winkel: ", delayedAngle, "\n")
+                    print("Abstand: ", ultrasonic.distance, "\n")
+                    radar.drawObject(angle=delayedAngle, distance=(ultrasonic.distance * 2))
 
                 root.update()
                 sleep(0.01)
