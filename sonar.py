@@ -1,17 +1,18 @@
-from gpiozero import Servo
 import math
 from time import sleep
 import tkinter as tk
 import array
 
-from gpiozero import DistanceSensor
+from gpiozero import DistanceSensor, Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
+
+root = tk.Tk()
 
 class Radar(tk.Canvas):
     line = 0
     # 180° divided by 5° -> 36 values + 1 value for 180° 
     objects = array.array("i", (0 for i in range(0,37)))
-    spacing = 50
+    SPACING = 50
     width = 0
     height = 0
     centerX = 0
@@ -25,16 +26,14 @@ class Radar(tk.Canvas):
         Radar.height = self.winfo_reqheight()
         Radar.centerX = Radar.width / 2
         Radar.centerY = Radar.height / 2
-        Radar.radian = (Radar.width - Radar.spacing * 2) / 2
+        Radar.radian = (Radar.width - Radar.SPACING * 2) / 2
 
     def drawRadar(self):
-
         # Draw background
-        self.create_arc(Radar.spacing, Radar.spacing, Radar.width - Radar.spacing, Radar.height - Radar.spacing, start=0, extent=180, outline="green", width=2)
+        self.create_arc(Radar.SPACING, Radar.SPACING, Radar.width - Radar.SPACING, Radar.height - Radar.SPACING, start=0, extent=180, outline="green", width=2)
 
         # Degree lines
         numLines = 8
-        
         for i in range(1, numLines):
             angleRad = math.radians(180 / numLines * i)
             x = Radar.centerX + Radar.radian * math.cos(angleRad)
@@ -50,7 +49,7 @@ class Radar(tk.Canvas):
 
         # Semicircles
         for i in range(1, 10):
-            x = Radar.spacing + i * 20
+            x = Radar.SPACING + i * 20
             self.create_arc(x, x, Radar.width - x, Radar.height - x, start=0, extent=180, outline="green", width=1)
 
     # Moving line
@@ -64,6 +63,7 @@ class Radar(tk.Canvas):
         y = Radar.centerY - Radar.radian * math.sin(angleRad)
         Radar.line = self.create_line(Radar.centerX, Radar.centerY, x, y, fill="green")
 
+    # Detected object
     def drawObject(self, angle, distance):
         distance *= Radar.radian
         x1 = Radar.centerX + distance * math.cos(math.radians(angle)) - 5
@@ -85,8 +85,6 @@ def specificRound(angle) -> int:
         return roundedAngle
     return int(round(angle))
 
-root = tk.Tk()
-
 def rotateSensor():
     factoryServo = PiGPIOFactory()
     servo = Servo(17, min_pulse_width=0.8/1000, max_pulse_width=2.5/1000, pin_factory=factoryServo)  
@@ -102,6 +100,7 @@ def rotateSensor():
         for angle in range(0, 360):
             try:
                 servo.value = math.sin(math.radians(angle))
+                # Delay GUI for more accuracy
                 delayedValue = math.sin(math.radians(angle - 25))
                 delayedAngle = abs(90 * delayedValue - 90)
                 radar.drawLine(angle=delayedAngle)
