@@ -104,10 +104,12 @@ def rotateSensor():
                 delayedValue = math.sin(math.radians(angle - 25))
                 delayedAngle = abs(90 * delayedValue - 90)
                 radar.drawLine(angle=delayedAngle)
-                distance = ultrasonic.distance
+                
                 # Only draw object if in range and only every 5th degree
-                if (distance < 0.5 and specificRound(delayedAngle) % 5 == 0):
-                    radar.drawObject(angle=delayedAngle, distance=(distance * 2))
+                if (specificRound(delayedAngle) % 5 == 0):
+                    distance = ultrasonic.distance
+                    if (distance < 0.5):
+                        radar.drawObject(angle=delayedAngle, distance=(distance * 2))
 
                 root.update()
                 sleep(0.01)
